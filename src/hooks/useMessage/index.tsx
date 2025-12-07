@@ -1,22 +1,20 @@
 import React, { createContext, useContext, useMemo, useCallback } from "react";
 import { message } from "antd";
+import type { ArgsProps } from "antd/es/message/interface";
+import { nanoid } from "@reduxjs/toolkit";
 
 type MESSAGE_TYPE = "success" | "error" | "info" | "warning" | "loading";
 
-type IMessageType =
-	| {
-			content: React.ReactNode;
-			key?: string | number;
-	  }
-	| string;
+type IMessageType = string | Omit<ArgsProps, "type">;
 
 interface MessageApiContextType {
-	success: (params: IMessageType) => void;
-	error: (params: IMessageType) => void;
-	info: (params: IMessageType) => void;
-	warning: (params: IMessageType) => void;
-	loading: (params: IMessageType) => void;
+	success: (params: IMessageType) => string | number;
+	error: (params: IMessageType) => string | number;
+	info: (params: IMessageType) => string | number;
+	warning: (params: IMessageType) => string | number;
+	loading: (params: IMessageType) => string | number;
 	dismiss: (key?: string | number) => void;
+	clear: () => void;
 }
 
 const MessageApiContext = createContext<MessageApiContextType | null>(null);
@@ -28,19 +26,24 @@ export const MessageApiProvider: React.FC<{ children: React.ReactNode }> = ({
 
 	const showMessage = useCallback(
 		(type: MESSAGE_TYPE, params: IMessageType) => {
-			messageApi.open(
-				typeof params === "string"
-					? {
-							type,
-							content: params,
-							duration: type === "loading" ? 0 : 3,
-					  }
-					: {
-							type,
-							duration: type === "loading" ? 0 : 3,
-							...params,
-					  }
-			);
+			let config: ArgsProps;
+
+			if (typeof params === "string") {
+				config = { type, content: params };
+			} else {
+				config = { type, ...params };
+			}
+
+			if (config.key === undefined) {
+				config.key = nanoid();
+			}
+
+			if (config.duration === undefined && type === "loading") {
+				config.duration = 0;
+			}
+
+			messageApi.open(config);
+			return config.key as string | number;
 		},
 		[messageApi]
 	);
@@ -53,6 +56,7 @@ export const MessageApiProvider: React.FC<{ children: React.ReactNode }> = ({
 			warning: (p) => showMessage("warning", p),
 			loading: (p) => showMessage("loading", p),
 			dismiss: (key) => messageApi.destroy(key),
+			clear: () => messageApi.destroy(),
 		}),
 		[showMessage, messageApi]
 	);
