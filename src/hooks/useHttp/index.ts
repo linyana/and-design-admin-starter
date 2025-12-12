@@ -1,8 +1,8 @@
 import { useState } from "react";
 import axios, { type AxiosResponse } from "axios";
-import { useConfig, useMessage } from "@/hooks";
+import { useGlobal, useMessage } from "@/hooks";
 import type { IHttpResponse, IUseHttpProps, UseHttpState } from "./types";
-import { nanoid } from "@reduxjs/toolkit";
+import { nanoid } from "nanoid";
 
 export * from "./types";
 
@@ -48,7 +48,7 @@ export const useHttp = <IRequestType = any, IResponseType = any>({
   IRequestType,
   IResponseType
 > => {
-  const { token, apiBaseUrl } = useConfig();
+  const { token, apiBaseUrl } = useGlobal();
   const message = useMessage();
 
   if (success.message === undefined)

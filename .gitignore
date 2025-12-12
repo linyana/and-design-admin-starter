@@ -27,3 +27,6 @@ dist-ssr
 # pnpm lock file
 .pnpm-lock.yaml
 pnpm-lock.yaml
+
+# env
+.env

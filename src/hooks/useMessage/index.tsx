@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useMemo, useCallback } from "react";
 import { message } from "antd";
 type MessageArgsProps = Parameters<typeof message.open>[0];
-import { nanoid } from "@reduxjs/toolkit";
+import { nanoid } from "nanoid";
 
 type MESSAGE_TYPE = "success" | "error" | "info" | "warning" | "loading";
 
