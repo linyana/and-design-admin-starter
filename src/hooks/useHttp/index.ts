@@ -1,8 +1,8 @@
 import { useState } from "react";
 import axios, { type AxiosResponse } from "axios";
-import { useConfig, useMessage } from "@/hooks";
+import { useGlobal, useMessage } from "@/hooks";
 import type { IHttpResponse, IUseHttpProps, UseHttpState } from "./types";
-import { nanoid } from "@reduxjs/toolkit";
+import { nanoid } from "nanoid";
 
 export * from "./types";
 
@@ -24,7 +24,10 @@ const handleHttpError = (
       errorMessage = "Time out";
       break;
     default:
-      errorMessage = error?.response?.data?.meta?.message || error?.message || "Unknown error";
+      errorMessage =
+        error?.response?.data?.meta?.message ||
+        error?.message ||
+        "Unknown error";
       break;
   }
 
@@ -45,19 +48,21 @@ export const useHttp = <IRequestType = any, IResponseType = any>({
   IRequestType,
   IResponseType
 > => {
-  const { token, apiBaseUrl } = useConfig();
+  const { token, apiBaseUrl } = useGlobal();
   const message = useMessage();
 
   if (success.message === undefined)
     success.message = !method || method === "get" ? null : "default";
   if (error.message === undefined) error.message = "default";
 
-  const [state, setState] = useState<UseHttpState<IRequestType, IResponseType>>({
-    loading: false,
-    data: null,
-    errorMessage: null,
-    fetchData: () => {},
-  });
+  const [state, setState] = useState<UseHttpState<IRequestType, IResponseType>>(
+    {
+      loading: false,
+      data: null,
+      errorMessage: null,
+      fetchData: () => {},
+    }
+  );
 
   const fetchData = async (overrideData?: IRequestType) => {
     const loadingKey = nanoid();
@@ -74,15 +79,19 @@ export const useHttp = <IRequestType = any, IResponseType = any>({
 
       const requestData = overrideData ?? data;
 
-      const response: AxiosResponse<IHttpResponse<IResponseType>> = await axios({
-        url: `${apiBaseUrl}${url}`,
-        method,
-        ...(method === "get" ? { params: requestData } : { data: requestData }),
-        headers: {
-          ...headers,
-          Authorization: token ? `Bearer ${token}` : "",
-        },
-      });
+      const response: AxiosResponse<IHttpResponse<IResponseType>> = await axios(
+        {
+          url: `${apiBaseUrl}${url}`,
+          method,
+          ...(method === "get"
+            ? { params: requestData }
+            : { data: requestData }),
+          headers: {
+            ...headers,
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        }
+      );
 
       const responseData = response.data;
 

@@ -14,6 +14,7 @@ dist-ssr
 
 # Editor directories and files
 .vscode/*
+.vscode
 !.vscode/extensions.json
 .idea
 .DS_Store
@@ -26,3 +27,6 @@ dist-ssr
 # pnpm lock file
 .pnpm-lock.yaml
 pnpm-lock.yaml
+
+# env
+.env
