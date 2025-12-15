@@ -15,8 +15,9 @@ import {
 } from "@ant-design/icons";
 
 import { Navigate } from "react-router-dom";
+import type { IRouteType } from "@/types";
 
-export const routes = [
+export const routes: IRouteType[] = [
   {
     path: "/",
     element: <>Landing Page</>,
@@ -27,14 +28,27 @@ export const routes = [
   {
     path: "/login",
     element: <Login />,
-    handle: { layout: "blank" },
+    handle: {
+      layout: "blank",
+    },
   },
   {
     path: "/products",
     element: <Product />,
     handle: {
-      menu: { position: "top", title: "Products", icon: <AppstoreOutlined /> },
+      menu: {
+        position: "top",
+        title: "Products",
+        icon: <AppstoreOutlined />,
+      },
     },
+    children: [
+      {
+        path: "list",
+        element: <Product />,
+        handle: { menu: { title: "List" } },
+      },
+    ],
   },
   {
     path: "/dashboard",
