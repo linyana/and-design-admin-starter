@@ -1,3 +1,3 @@
-export const Header = () => (
+export const LayoutHeader = () => (
   <>Header</>
 );

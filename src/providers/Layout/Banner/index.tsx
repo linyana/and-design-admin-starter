@@ -1,1 +1,1 @@
-export const Banner = () => <h2>Demo</h2>;
+export const LayoutBanner = () => <h2>Demo</h2>;

@@ -1,35 +1,10 @@
 import React from "react";
-import {
-  AppstoreOutlined,
-  BarChartOutlined,
-  CloudOutlined,
-  ShopOutlined,
-  TeamOutlined,
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-} from "@ant-design/icons";
-import type { MenuProps } from "antd";
-import { Flex, Layout, Menu, theme } from "antd";
-import { Banner } from "./Banner";
-import { Header as HeaderComponent } from "./Header";
+import { Flex, Layout, theme } from "antd";
+import { LayoutBanner } from "./Banner";
+import { LayoutHeader } from "./Header";
+import { LayoutMenu } from "./Menu";
 
 const { Header, Content, Footer, Sider } = Layout;
-
-const items: MenuProps["items"] = [
-  UserOutlined,
-  VideoCameraOutlined,
-  UploadOutlined,
-  BarChartOutlined,
-  CloudOutlined,
-  AppstoreOutlined,
-  TeamOutlined,
-  ShopOutlined,
-].map((icon, index) => ({
-  key: String(index + 1),
-  icon: React.createElement(icon),
-  label: `nav ${index + 1}`,
-}));
 
 const headerHeight = 64;
 
@@ -62,7 +37,7 @@ export const LayoutProvider: React.FC = () => {
             align="center"
             justify="center"
           >
-            <Banner />
+            <LayoutBanner />
           </Flex>
           <div
             style={{
@@ -71,7 +46,7 @@ export const LayoutProvider: React.FC = () => {
               boxSizing: "border-box",
             }}
           >
-            <HeaderComponent />
+            <LayoutHeader />
           </div>
         </Flex>
       </Header>
@@ -89,16 +64,7 @@ export const LayoutProvider: React.FC = () => {
           }}
           width={siderWidth}
         >
-          <Menu
-            mode="inline"
-            defaultSelectedKeys={["1"]}
-            items={items}
-            styles={{
-              root: {
-                border: "none",
-              },
-            }}
-          />
+          <LayoutMenu />
         </Sider>
         <Layout>
           <Content style={{ margin: "16px 16px 0", overflow: "initial" }}>
