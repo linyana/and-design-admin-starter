@@ -3,6 +3,7 @@ import { Flex, Layout, theme } from "antd";
 import { LayoutBanner } from "./Banner";
 import { LayoutHeader } from "./Header";
 import { LayoutMenu } from "./Menu";
+import { LayoutBottomMenu } from "./BottomMenu";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -54,17 +55,32 @@ export const LayoutProvider: React.FC = () => {
       <Layout>
         <Sider
           style={{
-            overflow: "auto",
+            overflow: "hidden",
             height: `calc(100vh - ${headerHeight}px)`,
             position: "sticky",
             insetInlineStart: 0,
             top: headerHeight,
-            scrollbarWidth: "thin",
             borderRight: border,
           }}
           width={siderWidth}
         >
-          <LayoutMenu />
+          <Flex
+            vertical
+            style={{
+              height: "100%",
+            }}
+          >
+            <div
+              style={{
+                flex: 1,
+                overflow: "auto",
+                scrollbarWidth: "thin",
+              }}
+            >
+              <LayoutMenu />
+            </div>
+            <LayoutBottomMenu />
+          </Flex>
         </Sider>
         <Layout>
           <Content style={{ margin: "16px 16px 0", overflow: "initial" }}>

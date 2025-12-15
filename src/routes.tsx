@@ -1,4 +1,4 @@
-import { Dashboard, Login, Product, ProductDetails } from "./pages";
+import { Dashboard, HelpCenter, Login, Product, ProductDetails, Settings } from "./pages";
 
 import { Navigate } from "react-router-dom";
 
@@ -22,6 +22,14 @@ export const routes = [
   {
     path: "/products/:id",
     element: <ProductDetails />,
+  },
+  {
+    path: "/settings",
+    element: <Settings />,
+  },
+  {
+    path: "/help-center",
+    element: <HelpCenter />,
   },
   {
     path: "/404",
