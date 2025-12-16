@@ -1,3 +1,5 @@
+export type IThemeType = "light" | "dark" 
+
 export type IStateType = {
   token: string;
   theme: "light" | "dark";

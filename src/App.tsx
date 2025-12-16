@@ -1,3 +1,9 @@
+import { LayoutProvider, ThemeProvider } from "./providers";
+
 export const App = () => {
-  return <>App</>;
+  return (
+    <ThemeProvider>
+      <LayoutProvider />
+    </ThemeProvider>
+  );
 };
