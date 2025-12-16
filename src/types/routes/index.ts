@@ -8,18 +8,12 @@ export type MenuMeta = {
   position?: MenuPosition;
   title?: string;
   icon?: ReactNode;
-  group?: string;
-  type?: "divider";
-};
-
-export type RouteHandle = {
-  menu?: MenuMeta;
-  layout?: LayoutMode;
 };
 
 export type IRouteType = {
   path?: string;
   element?: ReactNode;
   children?: IRouteType[];
-  handle?: RouteHandle;
+  menu?: MenuMeta;
+  layout?: LayoutMode
 };

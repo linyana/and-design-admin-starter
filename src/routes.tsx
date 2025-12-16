@@ -21,77 +21,63 @@ export const routes: IRouteType[] = [
   {
     path: "/",
     element: <>Landing Page</>,
-    handle: {
-      menu: { position: "top", title: "Home", icon: <HomeOutlined /> },
-    },
+    menu: { title: "Home", icon: <HomeOutlined /> },
   },
   {
     path: "/login",
     element: <Login />,
-    handle: {
-      layout: "blank",
-    },
+    layout: "blank",
   },
   {
-    path: "/products",
-    element: <Product />,
-    handle: {
-      menu: {
-        position: "top",
-        title: "Products",
-        icon: <AppstoreOutlined />,
-      },
+    path: "/catalogs",
+    menu: {
+      title: "Catalogs",
+      icon: <AppstoreOutlined />,
     },
     children: [
       {
-        path: "list",
+        path: "products",
         element: <Product />,
-        handle: { menu: { title: "List" } },
+        menu: { title: "Products" },
+        children: [
+          {
+            path: ":id",
+            element: <ProductDetails />,
+          },
+        ],
       },
     ],
   },
   {
     path: "/dashboard",
     element: <Dashboard />,
-    handle: {
-      menu: {
-        position: "top",
-        title: "Dashboard",
-        icon: <DashboardOutlined />,
-      },
+    menu: {
+      title: "Dashboard",
+      icon: <DashboardOutlined />,
     },
-  },
-  {
-    path: "/products/:id",
-    element: <ProductDetails />,
-    handle: {},
   },
   {
     path: "/settings",
     element: <Settings />,
-    handle: {
-      menu: {
-        position: "bottom",
-        title: "Settings",
-        icon: <SettingOutlined />,
-      },
+    menu: {
+      position: "bottom",
+      title: "Settings",
+      icon: <SettingOutlined />,
     },
   },
   {
     path: "/help-center",
     element: <HelpCenter />,
-    handle: {
-      menu: {
-        position: "bottom",
-        title: "Help Center",
-        icon: <QuestionCircleOutlined />,
-      },
+    menu: {
+      position: "bottom",
+      title: "Help Center",
+      icon: <QuestionCircleOutlined />,
     },
   },
   {
     path: "/404",
     element: <>Not Found</>,
-    handle: { layout: "blank" },
+    layout: "blank",
   },
   {
     path: "*",

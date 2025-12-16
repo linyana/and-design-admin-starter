@@ -6,7 +6,7 @@ import { routes } from "@/routes";
 type Position = "top" | "bottom";
 
 const labelFromRoute = (r: any) => {
-  const h = r?.handle?.menu;
+  const h = r?.menu;
   if (h?.title) return h.title as string;
   const path = r?.path || "";
   if (path === "/") return "Home";
@@ -15,8 +15,9 @@ const labelFromRoute = (r: any) => {
 };
 
 const isMenuRoute = (position: Position) => (r: any) => {
-  const h = r?.handle?.menu;
-  const pos = h?.position === position;
+  const h = r?.menu;
+  if (!h) return false;
+  const pos = (h.position ?? "top") === position;
   const p = r?.path || "";
   const valid = p && !p.includes(":") && !p.includes("*");
   return pos && valid;
@@ -47,15 +48,17 @@ export const LayoutRouteMenu: React.FC<{
       return {
         key: r.path,
         label: labelFromRoute(r),
-        icon: r?.handle?.menu?.icon,
+        icon: r?.menu?.icon,
       };
     }
 
     const groups: Record<string, any[]> = {};
     const normal: any[] = [];
     for (const c of children) {
-      const g = c?.handle?.menu?.group as string | undefined;
-      const type = c?.handle?.menu?.type as string | undefined;
+      const mh = c?.menu;
+      if (!mh) continue;
+      const g = mh.group as string | undefined;
+      const type = mh.type as string | undefined;
       if (type === "divider") {
         normal.push({ type: "divider" });
         continue;
@@ -63,8 +66,8 @@ export const LayoutRouteMenu: React.FC<{
       const key = toAbs(r.path as string, c.path as string | undefined);
       const item = {
         key,
-        label: labelFromRoute(c),
-        icon: c?.handle?.menu?.icon,
+        label: mh.title ?? labelFromRoute(c),
+        icon: mh.icon,
       };
       if (g) {
         if (!groups[g]) groups[g] = [];
@@ -88,7 +91,7 @@ export const LayoutRouteMenu: React.FC<{
     return {
       key: r.path,
       label: labelFromRoute(r),
-      icon: r?.handle?.menu?.icon,
+      icon: r?.menu?.icon,
       children: childrenItems,
     };
   };
