@@ -70,7 +70,7 @@ export const routes: IRouteType[] = [
     element: <HelpCenter />,
     menu: {
       position: "bottom",
-      label: "Help Center",
+      label: "产品",
       icon: <QuestionCircleOutlined />,
     },
   },

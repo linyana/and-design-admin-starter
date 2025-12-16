@@ -57,6 +57,7 @@ export const LayoutProvider: React.FC = () => {
             style={{
               width: siderWidth,
               borderRight: border,
+              height: headerHeight,
             }}
             align="center"
             justify="center"
