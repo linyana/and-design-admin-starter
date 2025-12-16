@@ -1,19 +1,17 @@
-import type { ReactNode } from "react";
+export type ILayoutType = "default" | "blank" | "centered";
 
-export type LayoutMode = "layout" | "none" | "blank";
+export type IMenuPositionType = "top" | "bottom";
 
-export type MenuPosition = "top" | "bottom";
-
-export type MenuMeta = {
-  position?: MenuPosition;
-  title?: string;
-  icon?: ReactNode;
+export type IMenuType = {
+  position?: IMenuPositionType;
+  label?: React.ReactNode;
+  icon?:  React.ReactNode;
 };
 
 export type IRouteType = {
   path?: string;
-  element?: ReactNode;
+  element?:  React.ReactNode;
   children?: IRouteType[];
-  menu?: MenuMeta;
-  layout?: LayoutMode
+  menu?: IMenuType;
+  layout?: ILayoutType
 };

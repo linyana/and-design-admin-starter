@@ -19,26 +19,34 @@ import type { IRouteType } from "@/types";
 
 export const routes: IRouteType[] = [
   {
-    path: "/",
-    element: <>Landing Page</>,
-    menu: { title: "Home", icon: <HomeOutlined /> },
-  },
-  {
     path: "/login",
     element: <Login />,
     layout: "blank",
   },
   {
+    path: "/",
+    element: <>Landing Page</>,
+    menu: { label: "Home", icon: <HomeOutlined /> },
+  },
+  {
+    path: "/dashboard",
+    element: <Dashboard />,
+    menu: {
+      label: "Dashboard",
+      icon: <DashboardOutlined />,
+    },
+  },
+  {
     path: "/catalogs",
     menu: {
-      title: "Catalogs",
+      label: "Catalogs",
       icon: <AppstoreOutlined />,
     },
     children: [
       {
         path: "products",
         element: <Product />,
-        menu: { title: "Products" },
+        menu: { label: "Products" },
         children: [
           {
             path: ":id",
@@ -49,19 +57,11 @@ export const routes: IRouteType[] = [
     ],
   },
   {
-    path: "/dashboard",
-    element: <Dashboard />,
-    menu: {
-      title: "Dashboard",
-      icon: <DashboardOutlined />,
-    },
-  },
-  {
     path: "/settings",
     element: <Settings />,
     menu: {
       position: "bottom",
-      title: "Settings",
+      label: "Settings",
       icon: <SettingOutlined />,
     },
   },
@@ -70,14 +70,14 @@ export const routes: IRouteType[] = [
     element: <HelpCenter />,
     menu: {
       position: "bottom",
-      title: "Help Center",
+      label: "Help Center",
       icon: <QuestionCircleOutlined />,
     },
   },
   {
     path: "/404",
     element: <>Not Found</>,
-    layout: "blank",
+    layout: "centered",
   },
   {
     path: "*",

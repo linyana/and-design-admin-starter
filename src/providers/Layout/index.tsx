@@ -3,8 +3,8 @@ import { Flex, Layout, theme } from "antd";
 import { LayoutBanner } from "./Banner";
 import { LayoutHeader } from "./Header";
 import { LayoutBottomMenu, LayoutMenu } from "./Menu";
-import { useLocation, useRoutes, matchRoutes } from "react-router-dom";
-import { routes } from "@/routes";
+import { useCurrentRoute } from "@/hooks";
+import { LayoutFooter } from "./Footer";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -12,36 +12,30 @@ const headerHeight = 64;
 
 export const LayoutProvider: React.FC = () => {
   const {
-    token: { colorBgContainer, borderRadiusLG, colorBorderSecondary },
+    token: { colorBorderSecondary },
   } = theme.useToken();
+  const { route, element } = useCurrentRoute();
 
   const border = `1px solid ${colorBorderSecondary}`;
   const siderWidth = 255;
 
-  const location = useLocation();
-  const element = useRoutes(routes);
-  const matches = matchRoutes(routes, location) || [];
-  const last = matches[matches.length - 1]?.route as any;
-  const layoutMode =
-    (last?.handle?.layout as "none" | "blank" | "layout") || "layout";
+  const layoutMode = route?.layout || "default";
 
   if (layoutMode === "blank") return element;
-  if (layoutMode === "none")
+  if (layoutMode === "centered")
     return (
-      <Layout>
-        <Content style={{ margin: "16px 16px 0", overflow: "initial" }}>
-          <div
-            style={{
-              padding: 24,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-            }}
-          >
-            {element}
-          </div>
+      <Layout style={{ minHeight: "100vh" }}>
+        <Content
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {element}
         </Content>
-        <Footer style={{ textAlign: "center" }}>
-          Ant Design ©{new Date().getFullYear()} Created by Ant UED
+        <Footer>
+          <LayoutFooter />
         </Footer>
       </Layout>
     );
@@ -113,18 +107,10 @@ export const LayoutProvider: React.FC = () => {
         </Sider>
         <Layout>
           <Content style={{ margin: "16px 16px 0", overflow: "initial" }}>
-            <div
-              style={{
-                padding: 24,
-                background: colorBgContainer,
-                borderRadius: borderRadiusLG,
-              }}
-            >
-              {element}
-            </div>
+            {element}
           </Content>
-          <Footer style={{ textAlign: "center" }}>
-            Ant Design ©{new Date().getFullYear()} Created by Ant UED
+          <Footer>
+            <LayoutFooter />
           </Footer>
         </Layout>
       </Layout>

@@ -2,141 +2,80 @@ import React, { useMemo, useState, useEffect } from "react";
 import { Menu } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import { routes } from "@/routes";
+import type { IRouteType } from "@/types";
+import { nanoid } from "nanoid";
 
 type Position = "top" | "bottom";
 
-const labelFromRoute = (r: any) => {
-  const h = r?.menu;
-  if (h?.title) return h.title as string;
-  const path = r?.path || "";
-  if (path === "/") return "Home";
-  const seg = path.split("/").filter(Boolean).slice(-1)[0] || "";
-  return seg.charAt(0).toUpperCase() + seg.slice(1);
-};
-
-const isMenuRoute = (position: Position) => (r: any) => {
-  const h = r?.menu;
-  if (!h) return false;
-  const pos = (h.position ?? "top") === position;
-  const p = r?.path || "";
-  const valid = p && !p.includes(":") && !p.includes("*");
+const isMenuRoute = (position: Position) => (route: IRouteType) => {
+  const { menu, path = "" } = route;
+  if (!menu) return false;
+  const pos = (menu.position ?? "top") === position;
+  const valid = path && !path.includes(":") && !path.includes("*");
   return pos && valid;
 };
+
+const joinPaths = (basePath: string, subPath?: string) => {
+  if (!subPath) return basePath;
+  return `${basePath.replace(/\/$/, "")}/${subPath.replace(/^\//, "")}`;
+};
+
+const buildMenuItem = (route: IRouteType) => {
+  const children = Array.isArray(route.children)
+    ? route.children
+        .filter((c) => c.menu)
+        .map((c) => ({
+          key: joinPaths(route.path as string, c.path),
+          label: c.menu?.label,
+          icon: c.menu?.icon,
+        }))
+    : [];
+
+  return {
+    key: route.path || nanoid(),
+    label: route.menu?.label,
+    icon: route.menu?.icon,
+    ...(children.length ? { children } : {}),
+  };
+};
+
+const collectKeys = (items: any[]): string[] =>
+  items.flatMap((item) => [
+    item.key,
+    ...(item.children ? collectKeys(item.children) : []),
+  ]);
 
 export const LayoutRouteMenu: React.FC<{
   position: Position;
   style?: React.CSSProperties;
 }> = ({ position, style }) => {
+  const [openKeys, setOpenKeys] = useState<string[]>([]);
   const location = useLocation();
   const navigate = useNavigate();
 
-  const menuRoutes = useMemo(
-    () => routes.filter(isMenuRoute(position)),
+  const items = useMemo(
+    () => routes.filter(isMenuRoute(position)).map(buildMenuItem),
     [position]
   );
 
-  const toAbs = (parent: string, child: string | undefined) => {
-    if (!child) return parent;
-    const a = parent.replace(/\/$/, "");
-    const b = child.replace(/^\//, "");
-    return `${a}/${b}`;
-  };
-
-  const buildItems = (r: any) => {
-    const children = Array.isArray(r.children) ? r.children : [];
-    if (!children.length) {
-      return {
-        key: r.path,
-        label: labelFromRoute(r),
-        icon: r?.menu?.icon,
-      };
-    }
-
-    const groups: Record<string, any[]> = {};
-    const normal: any[] = [];
-    for (const c of children) {
-      const mh = c?.menu;
-      if (!mh) continue;
-      const g = mh.group as string | undefined;
-      const type = mh.type as string | undefined;
-      if (type === "divider") {
-        normal.push({ type: "divider" });
-        continue;
-      }
-      const key = toAbs(r.path as string, c.path as string | undefined);
-      const item = {
-        key,
-        label: mh.title ?? labelFromRoute(c),
-        icon: mh.icon,
-      };
-      if (g) {
-        if (!groups[g]) groups[g] = [];
-        groups[g].push(item);
-      } else {
-        normal.push(item);
-      }
-    }
-
-    const childrenItems: any[] = [];
-    for (const name of Object.keys(groups)) {
-      childrenItems.push({
-        key: `group:${name}:${r.path}`,
-        label: name,
-        type: "group",
-        children: groups[name],
-      });
-    }
-    childrenItems.push(...normal);
-
-    return {
-      key: r.path,
-      label: labelFromRoute(r),
-      icon: r?.menu?.icon,
-      children: childrenItems,
-    };
-  };
-
-  const items = useMemo(() => menuRoutes.map(buildItems), [menuRoutes]);
-
-  const flattenKeys = (arr: any[]): string[] => {
-    const res: string[] = [];
-    for (const it of arr) {
-      if (typeof it.key === "string" && !String(it.key).startsWith("group:"))
-        res.push(it.key as string);
-      if (Array.isArray(it.children)) res.push(...flattenKeys(it.children));
-    }
-    return res;
-  };
-
   const selectedKey = useMemo(() => {
     const pathname = location.pathname;
-    const keys = flattenKeys(items);
-    let match = "";
-    for (const p of keys) {
-      if (pathname.startsWith(p) && p.length >= match.length) match = p;
-    }
-    return match;
+    const keys = collectKeys(items);
+    return keys.reduce(
+      (match, key) =>
+        pathname.startsWith(key) && key.length > match.length ? key : match,
+      ""
+    );
   }, [location.pathname, items]);
 
-  const deriveParents = () => {
-    if (!selectedKey) return [] as string[];
-    const parents: string[] = [];
-    for (const it of items) {
-      const childKeys = flattenKeys(it.children || []);
-      if (childKeys.includes(selectedKey)) parents.push(it.key as string);
-    }
-    return parents;
-  };
-
-  const [openKeys, setOpenKeys] = useState<string[]>([]);
-
   useEffect(() => {
-    setOpenKeys((prev) => {
-      const parents = deriveParents();
-      const merged = Array.from(new Set([...prev, ...parents]));
-      return merged;
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (!selectedKey) return;
+    const parentKeys = items
+      .filter((item) =>
+        item.children?.some((child: any) => child.key === selectedKey)
+      )
+      .map((item) => item.key);
+    setOpenKeys((prev) => Array.from(new Set([...prev, ...parentKeys])));
   }, [selectedKey, items]);
 
   return (
@@ -145,14 +84,9 @@ export const LayoutRouteMenu: React.FC<{
       selectedKeys={selectedKey ? [selectedKey] : []}
       items={items}
       onClick={(e) => navigate(e.key)}
-      styles={{
-        root: {
-          border: "none",
-        },
-      }}
+      style={style}
       openKeys={openKeys}
       onOpenChange={(keys) => setOpenKeys(keys as string[])}
-      style={style}
     />
   );
 };
