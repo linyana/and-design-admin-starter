@@ -1,0 +1,6 @@
+export const LAYOUT = {
+  PADDING: 16,
+  HEADER_HEIGHT: 64,
+  FOOTER_HEIGHT: 65,
+  SIDER_WIDTH: 255,
+};

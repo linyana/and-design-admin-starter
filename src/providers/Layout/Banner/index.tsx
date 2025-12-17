@@ -20,7 +20,7 @@ export const LayoutBanner = () => (
       }}
     />
     <Title level={4} style={{ margin: 0 }}>
-      Ant Design
+      Admin Starter
     </Title>
   </Flex>
 );

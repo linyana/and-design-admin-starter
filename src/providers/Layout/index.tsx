@@ -5,10 +5,9 @@ import { LayoutHeader } from "./Header";
 import { LayoutBottomMenu, LayoutMenu } from "./Menu";
 import { useCurrentRoute } from "@/hooks";
 import { LayoutFooter } from "./Footer";
+import { LAYOUT } from "@/config";
 
-const { Header, Content, Footer, Sider } = Layout;
-
-const headerHeight = 64;
+const { Header, Content, Sider, Footer } = Layout;
 
 export const LayoutProvider: React.FC = () => {
   const {
@@ -17,8 +16,6 @@ export const LayoutProvider: React.FC = () => {
   const { route, element } = useCurrentRoute();
 
   const border = `1px solid ${colorBorderSecondary}`;
-  const siderWidth = 255;
-
   const layoutMode = route?.layout || "default";
 
   if (layoutMode === "blank") return element;
@@ -30,11 +27,17 @@ export const LayoutProvider: React.FC = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            backgroundColor: "rgba(255, 255, 255)",
           }}
         >
           {element}
         </Content>
-        <Footer>
+        <Footer
+          style={{
+            padding: LAYOUT.PADDING,
+            backgroundColor: "rgba(255, 255, 255)",
+          }}
+        >
           <LayoutFooter />
         </Footer>
       </Layout>
@@ -55,9 +58,9 @@ export const LayoutProvider: React.FC = () => {
         <Flex>
           <Flex
             style={{
-              width: siderWidth,
+              width: LAYOUT.SIDER_WIDTH,
               borderRight: border,
-              height: headerHeight,
+              height: LAYOUT.HEADER_HEIGHT,
             }}
             align="center"
             justify="center"
@@ -80,13 +83,13 @@ export const LayoutProvider: React.FC = () => {
         <Sider
           style={{
             overflow: "hidden",
-            height: `calc(100vh - ${headerHeight}px)`,
+            height: `calc(100vh - ${LAYOUT.HEADER_HEIGHT}px)`,
             position: "sticky",
             insetInlineStart: 0,
-            top: headerHeight,
+            top: LAYOUT.HEADER_HEIGHT,
             borderRight: border,
           }}
-          width={siderWidth}
+          width={LAYOUT.SIDER_WIDTH}
         >
           <Flex
             vertical
@@ -107,10 +110,18 @@ export const LayoutProvider: React.FC = () => {
           </Flex>
         </Sider>
         <Layout>
-          <Content style={{ margin: "16px 16px 0", overflow: "initial" }}>
+          <Content
+            style={{
+              margin: `${LAYOUT.PADDING}px ${LAYOUT.PADDING}px 0`,
+            }}
+          >
             {element}
           </Content>
-          <Footer>
+          <Footer
+            style={{
+              padding: LAYOUT.PADDING,
+            }}
+          >
             <LayoutFooter />
           </Footer>
         </Layout>

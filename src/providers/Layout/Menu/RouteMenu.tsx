@@ -2,12 +2,10 @@ import React, { useMemo, useState, useEffect } from "react";
 import { Menu } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import { routes } from "@/routes";
-import type { IRouteType } from "@/types";
+import type { IMenuPositionType, IRouteType } from "@/types";
 import { nanoid } from "nanoid";
 
-type Position = "top" | "bottom";
-
-const isMenuRoute = (position: Position) => (route: IRouteType) => {
+const isMenuRoute = (position: IMenuPositionType) => (route: IRouteType) => {
   const { menu, path = "" } = route;
   if (!menu) return false;
   const pos = (menu.position ?? "top") === position;
@@ -46,7 +44,7 @@ const collectKeys = (items: any[]): string[] =>
   ]);
 
 export const LayoutRouteMenu: React.FC<{
-  position: Position;
+  position: IMenuPositionType;
   style?: React.CSSProperties;
 }> = ({ position, style }) => {
   const [openKeys, setOpenKeys] = useState<string[]>([]);
