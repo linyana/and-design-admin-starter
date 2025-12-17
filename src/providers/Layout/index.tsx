@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Flex, Layout, theme } from "antd";
 import { LayoutBanner } from "./Banner";
 import { LayoutHeader } from "./Header";
@@ -13,13 +13,16 @@ export const LayoutProvider: React.FC = () => {
   const {
     token: { colorBorderSecondary },
   } = theme.useToken();
+
   const { route, element } = useCurrentRoute();
+  const [collapsed, setCollapsed] = useState(false);
 
   const border = `1px solid ${colorBorderSecondary}`;
   const layoutMode = route?.layout || "default";
 
   if (layoutMode === "blank") return element;
-  if (layoutMode === "centered")
+
+  if (layoutMode === "centered") {
     return (
       <Layout style={{ minHeight: "100vh" }}>
         <Content
@@ -27,7 +30,7 @@ export const LayoutProvider: React.FC = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "rgba(255, 255, 255)",
+            backgroundColor: "#fff",
           }}
         >
           {element}
@@ -35,88 +38,88 @@ export const LayoutProvider: React.FC = () => {
         <Footer
           style={{
             padding: LAYOUT.PADDING,
-            backgroundColor: "rgba(255, 255, 255)",
+            backgroundColor: "#fff",
           }}
         >
           <LayoutFooter />
         </Footer>
       </Layout>
     );
+  }
 
   return (
     <Layout>
-      <Header
+      <Sider
+        collapsed={collapsed}
+        width={LAYOUT.SIDER_WIDTH}
         style={{
-          padding: 0,
+          height: "100vh",
           position: "sticky",
-          top: 0,
-          zIndex: 1,
-          borderBottom: border,
-          backdropFilter: "blur(6px)",
+          top: LAYOUT.HEADER_HEIGHT,
+          insetInlineStart: 0,
+          borderRight: border,
+          overflow: "hidden",
         }}
       >
-        <Flex>
-          <Flex
+        <Flex vertical style={{ height: "100%" }}>
+          <div
             style={{
-              width: LAYOUT.SIDER_WIDTH,
-              borderRight: border,
               height: LAYOUT.HEADER_HEIGHT,
+              borderBottom: border,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
             }}
-            align="center"
-            justify="center"
           >
-            <LayoutBanner />
-          </Flex>
+            <LayoutBanner collapsed={collapsed} />
+          </div>
           <div
             style={{
               flex: 1,
-              padding: "0 16px",
-              boxSizing: "border-box",
+              overflow: "auto",
+              scrollbarWidth: "thin",
             }}
           >
-            <LayoutHeader />
+            <LayoutMenu />
           </div>
+          <LayoutBottomMenu />
         </Flex>
-      </Header>
+      </Sider>
 
       <Layout>
-        <Sider
+        <Header
           style={{
-            overflow: "hidden",
-            height: `calc(100vh - ${LAYOUT.HEADER_HEIGHT}px)`,
+            padding: 0,
             position: "sticky",
-            insetInlineStart: 0,
-            top: LAYOUT.HEADER_HEIGHT,
-            borderRight: border,
+            top: 0,
+            zIndex: 10,
+            height: LAYOUT.HEADER_HEIGHT,
+            borderBottom: border,
+            backdropFilter: "blur(6px)",
           }}
-          width={LAYOUT.SIDER_WIDTH}
         >
           <Flex
-            vertical
             style={{
               height: "100%",
+              padding: `${LAYOUT.SMALL_PADDING} ${LAYOUT.PADDING}`,
+              boxSizing: "border-box",
             }}
+            align="center"
           >
-            <div
-              style={{
-                flex: 1,
-                overflow: "auto",
-                scrollbarWidth: "thin",
-              }}
-            >
-              <LayoutMenu />
-            </div>
-            <LayoutBottomMenu />
+            <LayoutHeader collapsed={collapsed} setCollapsed={setCollapsed} />
           </Flex>
-        </Sider>
+        </Header>
+
         <Layout>
           <Content
             style={{
-              margin: `${LAYOUT.PADDING}px ${LAYOUT.PADDING}px 0`,
+              margin: `${LAYOUT.PADDING} ${LAYOUT.PADDING} 0`,
             }}
           >
             {element}
           </Content>
+
           <Footer
             style={{
               padding: LAYOUT.PADDING,
