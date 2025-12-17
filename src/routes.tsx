@@ -7,7 +7,6 @@ import {
   Settings,
 } from "./pages";
 import {
-  HomeOutlined,
   AppstoreOutlined,
   DashboardOutlined,
   SettingOutlined,
@@ -26,7 +25,7 @@ export const routes: IRouteType[] = [
   {
     path: "/",
     element: <>Landing Page</>,
-    menu: { label: "Home", icon: <HomeOutlined /> },
+    layout: "centered",
   },
   {
     path: "/dashboard",
@@ -70,7 +69,7 @@ export const routes: IRouteType[] = [
     element: <HelpCenter />,
     menu: {
       position: "bottom",
-      label: "产品",
+      label: "Help Center",
       icon: <QuestionCircleOutlined />,
     },
   },
