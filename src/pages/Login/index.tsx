@@ -1,15 +1,17 @@
-import { Button, Form, Input, Typography, Flex } from "antd";
-import banner from "@/assets/banner/banner2.svg";
+import { Button, Form, Input, Typography, Flex, theme } from "antd";
+import banner from "@/assets/banner/banner.svg";
 import { useLogin } from "@/services";
 import { useNavigate } from "react-router-dom";
 import { useGlobal } from "@/hooks";
 
 const { Title, Text } = Typography;
+const { useToken } = theme;
 
 export const Login = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const { actions } = useGlobal();
+  const { token } = useToken();
 
   const { fetchData, loading } = useLogin({
     showLoading: true,
@@ -40,8 +42,7 @@ export const Login = () => {
         align="center"
         style={{
           width: "50%",
-          backgroundColor: "var(--main-color)",
-          // backgroundColor: "#cfe1f8ff",
+          backgroundColor: token.colorPrimary,
         }}
       >
         <div style={{ width: "50%" }}>
