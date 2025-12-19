@@ -190,7 +190,7 @@ export const useHttp = <T extends IHttpGenerics = object>({
           content: error.message === "default" ? errorMessage : error.message,
         });
       } else {
-        message.dismiss(loadingKey);
+if (showLoading) message.dismiss(loadingKey);
       }
 
       error.action?.({
