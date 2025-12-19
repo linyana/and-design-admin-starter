@@ -26,7 +26,7 @@ export const Login = () => {
     },
   });
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: ILoginRequestType) => {
     fetchData({
       data: {
         email: values.email,
