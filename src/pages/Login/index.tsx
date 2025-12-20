@@ -1,6 +1,6 @@
 import { Button, Form, Input, Typography, Flex, theme } from "antd";
 import banner from "@/assets/banner/banner.svg";
-import { useLogin } from "@/services";
+import { useLogin, type ILoginRequestType } from "@/services";
 import { useNavigate } from "react-router-dom";
 import { useGlobal } from "@/hooks";
 

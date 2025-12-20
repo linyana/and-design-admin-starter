@@ -158,7 +158,7 @@ export const useHttp = <T extends IHttpGenerics = object>({
           content: finalMessage,
         });
       } else {
-if (showLoading) message.dismiss(loadingKey);
+        if (showLoading) message.dismiss(loadingKey);
       }
 
       success.action?.({
@@ -190,7 +190,7 @@ if (showLoading) message.dismiss(loadingKey);
           content: error.message === "default" ? errorMessage : error.message,
         });
       } else {
-if (showLoading) message.dismiss(loadingKey);
+        if (showLoading) message.dismiss(loadingKey);
       }
 
       error.action?.({
