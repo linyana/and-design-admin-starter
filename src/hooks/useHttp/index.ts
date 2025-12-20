@@ -158,7 +158,7 @@ export const useHttp = <T extends IHttpGenerics = object>({
           content: finalMessage,
         });
       } else {
-        message.dismiss(loadingKey);
+if (showLoading) message.dismiss(loadingKey);
       }
 
       success.action?.({
