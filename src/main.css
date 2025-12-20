@@ -3,8 +3,7 @@
   margin: 0;
   font-family:
     Inter,
-    /* "Source Han Sans SC", */
-    "Noto Sans SC",
+    /* "Source Han Sans SC", */ "Noto Sans SC",
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
@@ -25,4 +24,3 @@
   font-weight: 400;
   font-display: swap;
 } */
-

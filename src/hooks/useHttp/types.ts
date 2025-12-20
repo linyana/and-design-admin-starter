@@ -17,6 +17,7 @@ export type IUseHttpProps<IResponseType = any> = {
   data?: AxiosRequestConfig["data"];
   params?: AxiosRequestConfig["params"];
   headers?: AxiosRequestConfig["headers"];
+  showLoading?: boolean;
   success?: {
     message?: IMessageType;
     action?: (params: {

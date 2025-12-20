@@ -8,6 +8,7 @@ import type {
   IUseHttpProps,
   UseHttpState,
 } from "./types";
+import { nanoid } from "nanoid";
 
 export * from "./types";
 
@@ -67,6 +68,7 @@ export const useHttp = <T extends IHttpGenerics = object>({
   headers,
   success = {},
   error = {},
+  showLoading = false,
 }: IUseHttpProps<T["response"]>) => {
   type IRequestType = T["request"];
   type IResponseType = T["response"];
@@ -99,6 +101,14 @@ export const useHttp = <T extends IHttpGenerics = object>({
     data?: IRequestType;
     params?: IRequestType;
   }) => {
+    const loadingKey = nanoid();
+    if (showLoading) {
+      message.loading({
+        content: "Loading...",
+        key: loadingKey,
+      });
+    }
+
     const { data: overwriteData, params: overwriteParams } =
       overwriteBody || {};
 
@@ -143,7 +153,12 @@ export const useHttp = <T extends IHttpGenerics = object>({
             ? responseData.data
             : "Successfully";
         const finalMessage = isDefault ? responseMessage : success.message;
-        message.success(finalMessage);
+        message.success({
+          key: loadingKey,
+          content: finalMessage,
+        });
+      } else {
+        if (showLoading) message.dismiss(loadingKey);
       }
 
       success.action?.({
@@ -170,9 +185,12 @@ export const useHttp = <T extends IHttpGenerics = object>({
       });
 
       if (error.message) {
-        message.error(
-          error.message === "default" ? errorMessage : error.message
-        );
+        message.error({
+          key: loadingKey,
+          content: error.message === "default" ? errorMessage : error.message,
+        });
+      } else {
+        if (showLoading) message.dismiss(loadingKey);
       }
 
       error.action?.({

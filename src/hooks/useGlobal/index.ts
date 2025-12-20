@@ -31,10 +31,7 @@ export const useGlobal = create<IGlobalStateType>()(
     // Persistent configuration(localStorage)
     {
       name: "project-name",
-      partialize: ({ 
-        token,
-        theme,
-      }) => ({
+      partialize: ({ token, theme }) => ({
         token,
         theme,
       }),

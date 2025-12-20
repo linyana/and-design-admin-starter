@@ -1,7 +1,7 @@
 import { useGlobal } from "@/hooks";
 import { lightTheme } from "./Light";
 import { darkTheme } from "./Dark";
-import { ConfigProvider} from "antd";
+import { ConfigProvider } from "antd";
 import { basicTheme } from "./basic";
 
 type IPropsType = {
