@@ -3,7 +3,7 @@ import { Flex, Layout, theme } from "antd";
 import { LayoutBanner } from "./Banner";
 import { LayoutHeader } from "./Header";
 import { LayoutBottomMenu, LayoutMenu } from "./Menu";
-import { useCurrentRoute } from "@/hooks";
+import { Outlet, useMatches } from "react-router-dom";
 import { LayoutFooter } from "./Footer";
 import { LAYOUT } from "@/config";
 
@@ -14,13 +14,14 @@ export const LayoutProvider: React.FC = () => {
     token: { colorBorderSecondary },
   } = theme.useToken();
 
-  const { route, element } = useCurrentRoute();
   const [collapsed, setCollapsed] = useState(false);
 
   const border = `1px solid ${colorBorderSecondary}`;
-  const layoutMode = route?.layout || "default";
+  const matches = useMatches();
+  const last = matches[matches.length - 1];
+  const layoutMode = (last?.handle as any)?.layout || "default";
 
-  if (layoutMode === "blank") return element;
+  if (layoutMode === "blank") return <Outlet />;
 
   if (layoutMode === "centered") {
     return (
@@ -33,7 +34,7 @@ export const LayoutProvider: React.FC = () => {
             backgroundColor: "#fff",
           }}
         >
-          {element}
+          <Outlet />
         </Content>
         <Footer
           style={{
@@ -117,7 +118,7 @@ export const LayoutProvider: React.FC = () => {
               margin: `${LAYOUT.PADDING} ${LAYOUT.PADDING} 0`,
             }}
           >
-            {element}
+            <Outlet />
           </Content>
 
           <Footer

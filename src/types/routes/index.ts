@@ -10,8 +10,11 @@ export type IMenuType = {
 
 export type IRouteType = {
   path?: string;
+  index?: boolean;
   element?: React.ReactNode;
   children?: IRouteType[];
   menu?: IMenuType;
   layout?: ILayoutType;
+  auth?: boolean;
+  permissions?: string[];
 };

@@ -7,6 +7,7 @@ const initData: IStateType = {
   token: "",
   theme: "light",
   permissions: [],
+  user: null,
 };
 
 export const useGlobal = create<IGlobalStateType>()(
@@ -25,6 +26,7 @@ export const useGlobal = create<IGlobalStateType>()(
           set({
             token: "",
             permissions: [],
+            user: null,
           }),
       },
     }),

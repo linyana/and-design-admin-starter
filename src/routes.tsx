@@ -1,85 +1,144 @@
-import {
-  Dashboard,
-  HelpCenter,
-  Login,
-  Product,
-  ProductDetails,
-  Settings,
-} from "./pages";
-import {
-  AppstoreOutlined,
-  DashboardOutlined,
-  SettingOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
+import { NoAccess } from "./pages";
 
-import { Navigate } from "react-router-dom";
+import {
+  createBrowserRouter,
+  redirect,
+  isRouteErrorResponse,
+  useRouteError,
+} from "react-router-dom";
 import type { IRouteType } from "@/types";
+import type { RouteObject } from "react-router-dom";
+import { Result, Button } from "antd";
+import axios from "axios";
+import { useGlobal } from "@/hooks";
+import { LayoutProvider } from "@/providers";
 
-export const routes: IRouteType[] = [
-  {
-    path: "/login",
-    element: <Login />,
-    layout: "blank",
-  },
+import { routes } from "./routeConfig";
+
+export { routes };
+
+const requireAuth = async (route: IRouteType) => {
+  if (route.auth === false) return null;
+
+  const {
+    token,
+    user,
+    apiBaseUrl,
+    actions,
+    permissions: storedPermissions,
+  } = useGlobal.getState();
+
+  if (!token) throw redirect("/login");
+
+  let currentUser = user;
+  let currentPermissions = storedPermissions;
+
+  if (!currentUser) {
+    try {
+      const res = await axios.get(`${apiBaseUrl}/users/auth`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      currentUser = res.data?.data || res.data;
+      currentPermissions = currentUser?.permissions || [];
+
+      actions.set({
+        user: currentUser,
+        permissions: currentPermissions,
+      });
+    } catch (err: any) {
+      const status = err?.response?.status || 0;
+      if (status === 401) {
+        actions.logout();
+        throw redirect("/login");
+      }
+      if (status === 403) {
+        throw new Response("Forbidden", { status: 403 });
+      }
+      throw err;
+    }
+  }
+
+  const required = route.permissions || [];
+  if (!required.length) return null;
+
+  const list = Array.from(
+    new Set([
+      ...(currentPermissions || []),
+      ...(currentUser?.permissions || []),
+    ])
+  );
+
+  const ok = required.every((p) => list.includes(p));
+  if (!ok) throw new Response("Forbidden", { status: 403 });
+
+  return null;
+};
+
+const toRouteObjects = (items: IRouteType[]): RouteObject[] => {
+  return items.map((r) => {
+    const routeObject: RouteObject = {
+      path: r.path,
+      element: r.element,
+      loader: () => requireAuth(r),
+      handle: {
+        layout: r.layout,
+        menu: r.menu,
+      },
+      children: r.children ? toRouteObjects(r.children) : undefined,
+    };
+
+    if (r.auth === false) {
+      routeObject.loader = undefined;
+    }
+
+    return routeObject;
+  });
+};
+
+const RouteErrorElement = () => {
+  const err = useRouteError();
+
+  if (isRouteErrorResponse(err)) {
+    if (err.status === 403) return <NoAccess />;
+    if (err.status === 404) {
+      return <Result status="404" title="404" subTitle="Not Found" />;
+    }
+    return (
+      <Result
+        status="500"
+        title="Error"
+        subTitle={err.statusText || "Something went wrong"}
+        extra={
+          <Button type="primary" onClick={() => window.location.reload()}>
+            Reload
+          </Button>
+        }
+      />
+    );
+  }
+
+  return (
+    <Result
+      status="500"
+      title="Error"
+      subTitle="Something went wrong"
+      extra={
+        <Button type="primary" onClick={() => window.location.reload()}>
+          Reload
+        </Button>
+      }
+    />
+  );
+};
+
+export const router = createBrowserRouter([
   {
     path: "/",
-    element: <>Landing Page</>,
-    layout: "centered",
+    element: <LayoutProvider />,
+    errorElement: <RouteErrorElement />,
+    children: toRouteObjects(routes),
   },
-  {
-    path: "/dashboard",
-    element: <Dashboard />,
-    menu: {
-      label: "Dashboard",
-      icon: <DashboardOutlined />,
-    },
-  },
-  {
-    path: "/catalogs",
-    menu: {
-      label: "Catalogs",
-      icon: <AppstoreOutlined />,
-    },
-    children: [
-      {
-        path: "products",
-        element: <Product />,
-        menu: { label: "Products" },
-        children: [
-          {
-            path: ":id",
-            element: <ProductDetails />,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    path: "/settings",
-    element: <Settings />,
-    menu: {
-      position: "bottom",
-      label: "Settings",
-      icon: <SettingOutlined />,
-    },
-  },
-  {
-    path: "/help-center",
-    element: <HelpCenter />,
-    menu: {
-      position: "bottom",
-      label: "Help Center",
-      icon: <QuestionCircleOutlined />,
-    },
-  },
-  {
-    path: "/404",
-    element: <>Not Found</>,
-    layout: "centered",
-  },
-  {
-    path: "*",
-    element: <Navigate to="/404" />,
-  },
-];
+]);
