@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { Spin } from "antd";
 import type { IRouteType } from "@/types";
 import { useGlobal, useMessage } from "@/hooks";
-import { NoAccess } from "@/pages";
 import { useAuth } from "@/services";
 import { hasAllPermissions } from "@/utils";
 import { Layout } from "../Layout";
@@ -58,8 +57,12 @@ export const AuthProvider: React.FC<{
       </Layout.Centered>
     );
 
-  if (!hasAllPermissions(permissions, route?.handle?.permissions))
-    return <NoAccess />;
+  if (!hasAllPermissions(permissions, route?.handle?.permissions)) {
+    throw new Response("Forbidden", {
+      status: 403,
+      statusText: "Access denied",
+    });
+  }
 
   return <>{children}</>;
 };

@@ -21,14 +21,20 @@ export const HeaderUser = () => {
   const overlay = (
     <div
       style={{
-        width: 260,
         borderRadius: 16,
         border: "1px solid #e5e7eb",
         background: "#fff",
         padding: 16,
       }}
     >
-      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: 12,
+          alignItems: "center",
+          marginRight: 16,
+        }}
+      >
         <div style={{ position: "relative" }}>
           <Avatar size={56} src={user.avatar} icon={<UserOutlined />} />
           <span

@@ -1,1 +1,1 @@
-export * from "./rabc";
+export * from "./rbac";
