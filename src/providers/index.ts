@@ -1,3 +1,3 @@
 export * from "./Layout";
 export * from "./Theme";
-export * from "./Routes";
+export * from "./Auth";

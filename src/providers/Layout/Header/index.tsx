@@ -1,18 +1,28 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import { Button } from "antd";
+import { Button, Flex } from "antd";
+import { HeaderUser } from "./Profile";
 
 type IPropsType = {
   collapsed: boolean;
   setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const LayoutHeader = ({ collapsed, setCollapsed }: IPropsType) => (
-  <>
-    <Button
-      type="text"
-      icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-      onClick={() => setCollapsed(!collapsed)}
-      size="large"
-    />
-  </>
-);
+export const LayoutHeader = ({ collapsed, setCollapsed }: IPropsType) => {
+  return (
+    <Flex
+      justify="space-between"
+      align="center"
+      style={{
+        width: "100%",
+      }}
+    >
+      <Button
+        type="text"
+        icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+        onClick={() => setCollapsed(!collapsed)}
+        size="large"
+      />
+      <HeaderUser />
+    </Flex>
+  );
+};

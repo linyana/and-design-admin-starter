@@ -1,11 +1,14 @@
 import { RouterProvider } from "react-router-dom";
 import { ThemeProvider } from "./providers";
-import { router } from "./providers";
+import { MessageApiProvider } from "./hooks";
+import { router } from "./routes";
 
 export const App = () => {
   return (
-    <ThemeProvider>
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <MessageApiProvider>
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </MessageApiProvider>
   );
 };

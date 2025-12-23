@@ -1,16 +1,15 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { Menu } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
-import { routes } from "@/routes";
 import type { IMenuPositionType, IRouteType } from "@/types";
-import { nanoid } from "nanoid";
 
 const isMenuRoute = (position: IMenuPositionType) => (route: IRouteType) => {
-  const { menu, path = "" } = route;
+  const { handle: { menu } = {}, path = "" } = route;
   if (!menu) return false;
-  const pos = (menu.position ?? "top") === position;
-  const valid = path && !path.includes(":") && !path.includes("*");
-  return pos && valid;
+  if (menu.position !== position) return false;
+  if (!path) return false;
+  if (path.includes(":") || path.includes("*")) return false;
+  return true;
 };
 
 const joinPaths = (basePath: string, subPath?: string) => {
@@ -18,21 +17,21 @@ const joinPaths = (basePath: string, subPath?: string) => {
   return `${basePath.replace(/\/$/, "")}/${subPath.replace(/^\//, "")}`;
 };
 
-const buildMenuItem = (route: IRouteType) => {
-  const children = Array.isArray(route.children)
-    ? route.children
-        .filter((c) => c.menu)
-        .map((c) => ({
-          key: joinPaths(route.path as string, c.path),
-          label: c.menu?.label,
-          icon: c.menu?.icon,
-        }))
-    : [];
+const buildMenuItem = (route: IRouteType, parentPath = ""): any | null => {
+  const menu = route?.handle?.menu;
+  if (!menu) return null;
+
+  const fullPath = route.path ? joinPaths(parentPath, route.path) : parentPath;
+
+  const children =
+    route.children
+      ?.map((child: IRouteType) => buildMenuItem(child, fullPath))
+      .filter(Boolean) || [];
 
   return {
-    key: route.path || nanoid(),
-    label: route.menu?.label,
-    icon: route.menu?.icon,
+    key: fullPath,
+    label: menu.label,
+    icon: menu.icon,
     ...(children.length ? { children } : {}),
   };
 };
@@ -46,14 +45,19 @@ const collectKeys = (items: any[]): string[] =>
 export const LayoutRouteMenu: React.FC<{
   position: IMenuPositionType;
   style?: React.CSSProperties;
-}> = ({ position, style }) => {
+  routes: IRouteType[];
+}> = ({ position, style, routes }) => {
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const location = useLocation();
   const navigate = useNavigate();
 
   const items = useMemo(
-    () => routes.filter(isMenuRoute(position)).map(buildMenuItem),
-    [position]
+    () =>
+      routes
+        .filter(isMenuRoute(position))
+        .map((r) => buildMenuItem(r))
+        .filter(Boolean),
+    [routes, position]
   );
 
   const selectedKey = useMemo(() => {
@@ -68,23 +72,31 @@ export const LayoutRouteMenu: React.FC<{
 
   useEffect(() => {
     if (!selectedKey) return;
-    const parentKeys = items
-      .filter((item) =>
-        item.children?.some((child: any) => child.key === selectedKey)
-      )
-      .map((item) => item.key);
-    setOpenKeys((prev) => Array.from(new Set([...prev, ...parentKeys])));
+
+    const findParents = (nodes: any[], parents: string[] = []): string[] => {
+      for (const node of nodes) {
+        if (node.key === selectedKey) return parents;
+        if (node.children) {
+          const res = findParents(node.children, [...parents, node.key]);
+          if (res.length) return res;
+        }
+      }
+      return [];
+    };
+
+    const parentKeys = findParents(items);
+    setOpenKeys(parentKeys);
   }, [selectedKey, items]);
 
   return (
     <Menu
       mode="inline"
-      selectedKeys={selectedKey ? [selectedKey] : []}
       items={items}
-      onClick={(e) => navigate(e.key)}
-      style={style}
+      selectedKeys={selectedKey ? [selectedKey] : []}
       openKeys={openKeys}
       onOpenChange={(keys) => setOpenKeys(keys as string[])}
+      onClick={(e) => navigate(e.key)}
+      style={style}
     />
   );
 };

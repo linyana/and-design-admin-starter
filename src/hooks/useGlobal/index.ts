@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 import type { IGlobalStateType, IStateType } from "./types";
 
 const initData: IStateType = {
-  apiBaseUrl: import.meta.env.VITE_API_BASE_URL + "/api/v1",
+  apiBaseUrl: import.meta.env.VITE_API_BASE_URL,
   token: "",
   theme: "light",
   permissions: [],

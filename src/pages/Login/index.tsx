@@ -2,7 +2,7 @@ import { Button, Form, Input, Typography, Flex, theme } from "antd";
 import banner from "@/assets/banner/banner.svg";
 import { useLogin, type ILoginRequestType } from "@/services";
 import { useNavigate } from "react-router-dom";
-import { useGlobal } from "@/hooks";
+import { useGlobal, useMessage } from "@/hooks";
 
 const { Title, Text } = Typography;
 const { useToken } = theme;
@@ -13,12 +13,17 @@ export const Login = () => {
   const { actions } = useGlobal();
   const { token } = useToken();
 
+  const message = useMessage();
+
   const { fetchData, loading } = useLogin({
     showLoading: true,
     success: {
-      message: "Successfully login",
+      message: null,
       action: ({ data }) => {
         if (data) {
+          message.success(
+            `Welcome back, ${data?.first_name} ${data?.last_name}.`
+          );
           actions.set({ token: data.access });
           navigate("/dashboard");
         }

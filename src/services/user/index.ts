@@ -3,7 +3,7 @@ import type { IMeResponseType } from "./types";
 
 export * from "./types";
 
-export const useMe = (data: IHttpType) => {
+export const useAuth = (data?: IHttpType) => {
   return useHttp<{
     response: IMeResponseType;
   }>({

@@ -1,8 +1,9 @@
+import type { IPermissionType } from "../permissions";
+
 export type IUserType = {
-  id: string;
+  id?: string;
   email?: string;
   name?: string;
-  permissions?: string[];
-  [key: string]: any;
+  avatar?: string
+  permissions?: IPermissionType[];
 };
-

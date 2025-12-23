@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Flex, Layout, theme } from "antd";
 import { LayoutBanner } from "./Banner";
 import { LayoutHeader } from "./Header";
@@ -6,10 +6,13 @@ import { LayoutBottomMenu, LayoutMenu } from "./Menu";
 import { Outlet, useMatches } from "react-router-dom";
 import { LayoutFooter } from "./Footer";
 import { LAYOUT } from "@/config";
+import type { IRouteType } from "@/types";
 
 const { Header, Content, Sider, Footer } = Layout;
 
-export const LayoutProvider: React.FC = () => {
+export const LayoutProvider: React.FC<{ routes: IRouteType[] }> = ({
+  routes,
+}) => {
   const {
     token: { colorBorderSecondary },
   } = theme.useToken();
@@ -82,9 +85,9 @@ export const LayoutProvider: React.FC = () => {
               scrollbarWidth: "thin",
             }}
           >
-            <LayoutMenu />
+            <LayoutMenu routes={routes} />
           </div>
-          <LayoutBottomMenu />
+          <LayoutBottomMenu routes={routes} />
         </Flex>
       </Sider>
 
