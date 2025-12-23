@@ -3,9 +3,10 @@ import { Spin } from "antd";
 import type { IRouteType } from "@/types";
 import { useGlobal, useMessage } from "@/hooks";
 import { NoAccess } from "@/pages";
-import React, { useEffect } from "react";
 import { useAuth } from "@/services";
 import { hasAllPermissions } from "@/utils";
+import { Layout } from "../Layout";
+import { useEffect } from "react";
 
 export const AuthProvider: React.FC<{
   route: IRouteType;
@@ -35,33 +36,29 @@ export const AuthProvider: React.FC<{
     },
   });
 
-  if (!route?.handle?.auth) return <>{children}</>;
+  const needAuth = route?.handle?.auth;
 
   useEffect(() => {
-    if (!token) {
-      message.warning("You've been signed out. Please log in again.");
-      navigate("/login", { replace: true });
-      return;
+    if (needAuth) {
+      if (!token) {
+        message.warning("You've been signed out. Please log in again.");
+        navigate("/login", { replace: true });
+        return;
+      }
+      if (!user) {
+        fetchData();
+      }
     }
-    if (!user) {
-      fetchData();
-    }
-  }, [token, user]);
+  }, [token, user, needAuth]);
 
-  if (!token) return null;
-  if (!user || loading)
+  if ((needAuth && !user) || loading)
     return (
-      <Spin
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "100%",
-        }}
-      />
+      <Layout.Centered>
+        <Spin size="large" />
+      </Layout.Centered>
     );
 
-  if (!hasAllPermissions(permissions, route.handle.permissions))
+  if (!hasAllPermissions(permissions, route?.handle?.permissions))
     return <NoAccess />;
 
   return <>{children}</>;

@@ -55,9 +55,7 @@ export const HeaderUser = () => {
           >
             {user.name || "User"}
           </div>
-          <div style={{ fontSize: 12, color: "#6b7280" }}>
-            {"Member"}
-          </div>
+          <div style={{ fontSize: 12, color: "#6b7280" }}>{"Member"}</div>
         </div>
       </div>
 

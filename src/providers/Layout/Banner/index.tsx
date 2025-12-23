@@ -8,7 +8,7 @@ type IPropsType = {
   collapsed: boolean;
 };
 
-export const LayoutBanner = ({ collapsed }: IPropsType) => (
+export const Banner = ({ collapsed }: IPropsType) => (
   <Flex
     align="center"
     justify={"center"}

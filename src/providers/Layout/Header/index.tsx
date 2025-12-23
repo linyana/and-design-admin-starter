@@ -7,7 +7,7 @@ type IPropsType = {
   setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const LayoutHeader = ({ collapsed, setCollapsed }: IPropsType) => {
+export const Header = ({ collapsed, setCollapsed }: IPropsType) => {
   return (
     <Flex
       justify="space-between"

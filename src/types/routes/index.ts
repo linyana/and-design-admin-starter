@@ -10,12 +10,12 @@ export type IMenuType = {
   icon?: React.ReactNode;
 };
 
-export type IRouteType = RouteObject & {
+export type IRouteType = Omit<RouteObject, "children"> & {
   handle?: {
     menu?: IMenuType;
     layout?: ILayoutType;
     auth?: boolean;
     permissions?: IPermissionType[];
-  }
+  };
   children?: IRouteType[];
 };

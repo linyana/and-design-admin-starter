@@ -4,6 +4,6 @@ export type IUserType = {
   id?: string;
   email?: string;
   name?: string;
-  avatar?: string
+  avatar?: string;
   permissions?: IPermissionType[];
 };

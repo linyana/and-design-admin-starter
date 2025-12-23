@@ -1,4 +1,8 @@
-import { createBrowserRouter, Outlet } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Outlet,
+  type RouteObject,
+} from "react-router-dom";
 import { Result } from "antd";
 import {
   AppstoreOutlined,
@@ -15,8 +19,9 @@ import {
   Settings,
   Product,
 } from "./pages";
-import { AuthProvider, LayoutProvider } from "./providers";
+import { LayoutProvider } from "./providers";
 import type { IRouteType } from "./types";
+import { RouteErrorBoundary } from "./system/RouteErrorBoundary";
 
 const routes: IRouteType[] = [
   {
@@ -128,16 +133,6 @@ const normalizeRoutes = (routes: IRouteType[]): IRouteType[] =>
     return {
       ...route,
       handle,
-      element: (
-        <AuthProvider
-          route={{
-            ...route,
-            handle,
-          }}
-        >
-          {route.element}
-        </AuthProvider>
-      ),
       children: route.children ? normalizeRoutes(route.children) : undefined,
     };
   });
@@ -148,6 +143,7 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: <LayoutProvider routes={normalizedRoutes} />,
-    children: normalizedRoutes,
+    children: normalizedRoutes as unknown as RouteObject[],
+    errorElement: <RouteErrorBoundary />,
   },
 ]);
