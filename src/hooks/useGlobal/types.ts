@@ -1,9 +1,12 @@
+import type { IUserType } from "@/types";
+
 export type IThemeType = "light" | "dark";
 
 export type IStateType = {
   token: string;
   theme: "light" | "dark";
   permissions: string[];
+  user: IUserType | null;
   apiBaseUrl: string;
 };
 

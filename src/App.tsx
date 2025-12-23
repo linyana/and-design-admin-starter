@@ -1,9 +1,11 @@
-import { LayoutProvider, ThemeProvider } from "./providers";
+import { RouterProvider } from "react-router-dom";
+import { ThemeProvider } from "./providers";
+import { router } from "./providers";
 
 export const App = () => {
   return (
     <ThemeProvider>
-      <LayoutProvider />
+      <RouterProvider router={router} />
     </ThemeProvider>
   );
 };
