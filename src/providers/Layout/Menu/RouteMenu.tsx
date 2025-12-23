@@ -6,10 +6,9 @@ import type { IMenuPositionType, IRouteType } from "@/types";
 const isMenuRoute = (position: IMenuPositionType) => (route: IRouteType) => {
   const { handle: { menu } = {}, path = "" } = route;
   if (!menu) return false;
-  if (menu.position !== position) return false;
-  if (!path) return false;
-  if (path.includes(":") || path.includes("*")) return false;
-  return true;
+  const pos = (menu.position ?? "top") === position;
+  const valid = path && !path.includes(":") && !path.includes("*");
+  return pos && valid;
 };
 
 const joinPaths = (basePath: string, subPath?: string) => {
@@ -29,7 +28,7 @@ const buildMenuItem = (route: IRouteType, parentPath = ""): any | null => {
       .filter(Boolean) || [];
 
   return {
-    key: fullPath,
+    key: children.length ? `${fullPath}__group` : fullPath,
     label: menu.label,
     icon: menu.icon,
     ...(children.length ? { children } : {}),
