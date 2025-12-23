@@ -1,4 +1,4 @@
-export const LayoutFooter = () => {
+export const Footer = () => {
   return (
     <div
       style={{

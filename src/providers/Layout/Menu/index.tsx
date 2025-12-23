@@ -1,9 +1,14 @@
 import { theme } from "antd";
 import { LayoutRouteMenu } from "./RouteMenu";
+import type { IRouteType } from "@/types";
 
-export const LayoutMenu: React.FC = () => <LayoutRouteMenu position="top" />;
+export const LayoutMenu: React.FC<{ routes: IRouteType[] }> = ({ routes }) => (
+  <LayoutRouteMenu position="top" routes={routes} />
+);
 
-export const LayoutBottomMenu: React.FC = () => {
+export const LayoutBottomMenu: React.FC<{ routes: IRouteType[] }> = ({
+  routes,
+}) => {
   const {
     token: { colorBorderSecondary },
   } = theme.useToken();
@@ -14,6 +19,7 @@ export const LayoutBottomMenu: React.FC = () => {
       style={{
         borderTop: `1px solid ${colorBorderSecondary}`,
       }}
+      routes={routes}
     />
   );
 };
